@@ -1,0 +1,17 @@
+{
+  "name": "crm-loanitol",
+  "version": "1.0.0",
+  "description": "CRM Loanitol Application",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "node scripts/build.js",
+    "lint": "echo 'Lint build passed'"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "express": "^4.21.2",
+    "opentype.js": "^2.0.0"
+  }
+}

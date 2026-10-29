@@ -1,0 +1,70 @@
+<div class="panel" style="padding: 24px; background: var(--surface); border: 1px solid var(--border2); border-radius: 12px;">
+    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; border-bottom: 2px solid var(--gold); padding-bottom: 18px; margin-bottom: 22px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <i class="fas fa-question-circle fa-xl" style="color: var(--gold);"></i>
+            <span style="font-weight: 800; font-size: 26px; color: var(--gold); letter-spacing: -0.5px;">Enquiries</span>
+            <span class="badge enquiries-count-badge" id="enquiries-count-badge" style="padding: 6px 16px; border-radius: 20px; font-size: 15px; font-weight: 800; color: var(--gold); border: 1.5px solid var(--gold); background: var(--surface2);">0 Active</span>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <button class="btn btn-ghost btn-sm" onclick="purgeAllDummyEnquiries(true)" style="display: flex; align-items: center; gap: 8px; font-size: 15.5px; font-weight: 700; border-radius: 8px; border: 1.5px solid var(--border2); background: var(--surface2); color: var(--text); padding: 10px 18px;" title="Remove any dummy or test enquiries">
+                <i class="fas fa-broom" style="color: var(--gold);"></i> Clean Dummy Data
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="openAddEnquiry()" style="display: flex; align-items: center; gap: 8px; font-weight: 700; padding: 10px 22px; border-radius: 8px; font-size: 16px; background: var(--gold); border: 1px solid var(--gold); color: var(--gold-text, #000000);">
+                <i class="fas fa-plus"></i> + Add Enquiry
+            </button>
+        </div>
+    </div>
+    
+    <div class="panel-body" style="padding-top: 0;">
+        <!-- Filter Bar -->
+        <div style="margin-bottom: 22px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <div style="position: relative; flex-grow: 1; max-width: 340px;">
+                <input type="text" id="enquirySearchInput" placeholder="Search Applicant, Phone, Source..." class="tb-search" style="width: 100%; height: 46px; padding: 10px 16px 10px 42px; font-size: 16px; border-radius: 8px; border: 1.5px solid var(--border2); background: var(--surface2); color: var(--text); font-weight: 600;" oninput="renderEnquiries()" onkeydown="if(event.key==='Enter') renderEnquiries()">
+                <i class="fas fa-search" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--gold); font-size: 16px; cursor: pointer;" onclick="renderEnquiries()" title="Click to filter"></i>
+            </div>
+
+            <select id="enquiryFilterStaff" class="tb-search" style="max-width: 200px; height: 46px; padding: 8px 14px; font-size: 16px; font-weight: 600; border-radius: 8px; border: 1.5px solid var(--border2); background: var(--surface2); color: var(--text); display: none;" onchange="renderEnquiries()">
+                <option value="all" selected>All Staff / Logged By</option>
+            </select>
+
+            <select id="enquiryFilterCategory" class="tb-search" style="max-width: 190px; height: 46px; padding: 8px 14px; font-size: 16px; font-weight: 600; border-radius: 8px; border: 1.5px solid var(--border2); background: var(--surface2); color: var(--text);" onchange="renderEnquiries()">
+                <option value="all" selected>All Departments</option>
+                <option value="MSME">MSME</option>
+                <option value="Retail - Unsecured">Retail - Unsecured</option>
+                <option value="Retail - Secured">Retail - Secured</option>
+                <option value="Other Segment">Other Segment</option>
+            </select>
+
+            <select id="enquiryFilterLoanType" class="tb-search" style="max-width: 190px; height: 46px; padding: 8px 14px; font-size: 16px; font-weight: 600; border-radius: 8px; border: 1.5px solid var(--border2); background: var(--surface2); color: var(--text);" onchange="renderEnquiries()">
+                <option value="all" selected>All Loan Types</option>
+            </select>
+
+            <select id="enquiryFilterSource" class="tb-search" style="max-width: 180px; height: 46px; padding: 8px 14px; font-size: 16px; font-weight: 600; border-radius: 8px; border: 1.5px solid var(--border2); background: var(--surface2); color: var(--text);" onchange="renderEnquiries()">
+                <option value="all" selected>All Sources</option>
+                <option value="Direct Walk-in">Direct Walk-in</option>
+                <option value="Website Enquiry">Website Enquiry</option>
+                <option value="Phone Call">Phone Call</option>
+                <option value="Customer Referral">Customer Referral</option>
+                <option value="Social Media">Social Media</option>
+                <option value="Referral">Referral</option>
+                <option value="Others">Others</option>
+            </select>
+
+            <select id="enquiryFilterStatus" class="tb-search" style="max-width: 230px; height: 46px; padding: 8px 14px; font-size: 16px; font-weight: 600; border-radius: 8px; border: 1.5px solid #cbd5e1; background: #ffffff; color: #000000;" onchange="renderEnquiries()">
+                <option value="all" selected>All Statuses</option>
+                <option value="pending">Pending Enquiries</option>
+                <option value="followup">Callbacks</option>
+                <option value="converted">All Transferred Leads</option>
+                <option value="converted_new">Transferred: New Lead</option>
+                <option value="converted_docs">Transferred: Documentation</option>
+                <option value="converted_login">Transferred: Login</option>
+                <option value="converted_sanction">Transferred: Sanctioned</option>
+                <option value="converted_disbursed">Transferred: Disbursed</option>
+                <option value="dumped">Deactivated / Dumped Enquiry</option>
+                <option value="archived">Data Center</option>
+            </select>
+        </div>
+
+        <div id="enquiries-container"></div>
+    </div>
+</div>

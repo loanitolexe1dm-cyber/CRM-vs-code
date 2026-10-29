@@ -1,0 +1,290 @@
+<!-- Enhanced Lead Details View with Three Main Sections -->
+<div class="lead-detail-container">
+    <!-- Tab Navigation -->
+    <div class="lead-detail-tabs">
+        <button class="lead-detail-tab-btn active" data-tab="details" onclick="switchLeadDetailTab(this, 'details')">
+            <i class="fas fa-user"></i>
+            <span>Lead Details</span>
+        </button>
+        <button class="lead-detail-tab-btn" data-tab="timeline" onclick="switchLeadDetailTab(this, 'timeline')">
+            <i class="fas fa-clock"></i>
+            <span>Time Taken</span>
+        </button>
+        <button class="lead-detail-tab-btn" data-tab="stages" onclick="switchLeadDetailTab(this, 'stages')">
+            <i class="fas fa-tasks"></i>
+            <span>Stage Duration</span>
+        </button>
+    </div>
+
+    <!-- Tab Content Container -->
+    <div class="lead-detail-content">
+        <!-- Section 1: Lead Details -->
+        <div class="lead-detail-tab-content active" data-content="details">
+            <div id="lead_dump_section_banner" style="display:none; margin-bottom:16px;"></div>
+            <div class="lead-details-grid">
+                <!-- Customer Info Card -->
+                <div class="lead-info-card">
+                    <div class="lead-card-header">
+                        <i class="fas fa-id-card"></i>
+                        <span>Customer Information</span>
+                    </div>
+                    <div class="lead-card-body">
+                        <div class="info-row">
+                            <label>Name</label>
+                            <div class="info-value">
+                                <i class="fas fa-user-circle"></i>
+                                <span id="detail_name">-</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <label>Phone</label>
+                            <div class="info-value">
+                                <i class="fas fa-phone"></i>
+                                <span id="detail_phone">-</span>
+                                <button class="btn-link" onclick="copyToClipboard(document.getElementById('detail_phone').textContent)">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <label>Email</label>
+                            <div class="info-value">
+                                <i class="fas fa-envelope"></i>
+                                <span id="detail_email">-</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <label>Lead Source</label>
+                            <div class="info-value">
+                                <i class="fas fa-map-pin"></i>
+                                <span id="detail_source" class="badge badge-info">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loan Details Card -->
+                <div class="lead-info-card">
+                    <div class="lead-card-header">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>Loan Information</span>
+                    </div>
+                    <div class="lead-card-body">
+                        <div class="info-row">
+                            <label>Loan Type</label>
+                            <div class="info-value">
+                                <span id="detail_loanType" class="badge badge-primary">-</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <label>Loan Amount</label>
+                            <div class="info-value amount">
+                                <i class="fas fa-rupee-sign"></i>
+                                <span id="detail_amount">-</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <label>Category</label>
+                            <div class="info-value">
+                                <span id="detail_category" class="badge badge-secondary">-</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <label>Bank Name</label>
+                            <div class="info-value">
+                                <i class="fas fa-university"></i>
+                                <span id="detail_bank">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status & Assignment Card -->
+                <div class="lead-info-card">
+                    <div class="lead-card-header">
+                        <i class="fas fa-tasks-alt"></i>
+                        <span>Status & Assignment</span>
+                    </div>
+                    <div class="lead-card-body">
+                        <div class="info-row">
+                            <label>Current Status</label>
+                            <div class="info-value">
+                                <span id="detail_status" class="status-badge"></span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <label>Assigned to</label>
+                            <div class="info-value">
+                                <i class="fas fa-user-tie"></i>
+                                <span id="detail_assigned">Unassigned</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <label>Current Stage</label>
+                            <div class="info-value">
+                                <span id="detail_currentStage" class="badge badge-warning">-</span>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <label>Time in Stage</label>
+                            <div class="info-value">
+                                <i class="fas fa-hourglass-half"></i>
+                                <span id="detail_timeInStage">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes Section -->
+                <div class="lead-info-card lead-info-card-full">
+                    <div class="lead-card-header">
+                        <i class="fas fa-sticky-note"></i>
+                        <span>Notes & Remarks</span>
+                    </div>
+                    <div class="lead-card-body">
+                        <div class="notes-section" id="detail_notes">
+                            <p class="no-data">No remarks recorded yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="lead-detail-actions">
+                <button class="btn btn-primary" onclick="openEditLead()">
+                    <i class="fas fa-edit"></i> Edit Details
+                </button>
+                <button class="btn btn-info" onclick="openUpdateStatus()">
+                    <i class="fas fa-sync-alt"></i> Update Status
+                </button>
+            </div>
+        </div>
+
+        <!-- Section 2: Time Taken Window -->
+        <div class="lead-detail-tab-content" data-content="timeline">
+            <div class="timeline-container">
+                <!-- Summary Stats -->
+                <div class="timeline-summary">
+                    <div class="summary-stat">
+                        <span class="stat-icon"><i class="fas fa-calendar-plus"></i></span>
+                        <div class="stat-content">
+                            <p>Created Date</p>
+                            <span id="timeline_created">-</span>
+                        </div>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-icon"><i class="fas fa-clock"></i></span>
+                        <div class="stat-content">
+                            <p>Last Updated</p>
+                            <span id="timeline_updated">-</span>
+                        </div>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-icon"><i class="fas fa-stopwatch"></i></span>
+                        <div class="stat-content">
+                            <p>Total Time</p>
+                            <span id="timeline_total">-</span>
+                        </div>
+                    </div>
+                    <div class="summary-stat">
+                        <span class="stat-icon"><i class="fas fa-phone-alt"></i></span>
+                        <div class="stat-content">
+                            <p>Response Time</p>
+                            <span id="timeline_response">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-section">
+                    <h3 class="section-title">Lead Processing Progress</h3>
+                    <div class="progress-bar-large">
+                        <div class="progress-fill" id="timeline_progress" style="width: 0%"></div>
+                    </div>
+                    <p class="progress-label">
+                        <span id="timeline_progressPercent">0%</span> Complete
+                    </p>
+                </div>
+
+                <!-- Timeline Log -->
+                <div class="timeline-log">
+                    <h3 class="section-title">Event Timeline</h3>
+                    <div class="timeline-events" id="timeline_events">
+                        <p class="no-data">No timeline events available</p>
+                    </div>
+                </div>
+
+                <!-- Conversion Metrics -->
+                <div class="conversion-metrics">
+                    <h3 class="section-title">Key Metrics</h3>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-label">Avg Response Time</div>
+                            <div class="metric-value" id="metric_avgResponse">-</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Days in Process</div>
+                            <div class="metric-value" id="metric_daysInProcess">-</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Stage Changes</div>
+                            <div class="metric-value" id="metric_stageChanges">-</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Follow-ups</div>
+                            <div class="metric-value" id="metric_followups">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Stage Duration Window -->
+        <div class="lead-detail-tab-content" data-content="stages">
+            <div class="stages-container">
+                <!-- Horizontal Timeline Stepper -->
+                <div class="stage-timeline">
+                    <h3 class="section-title">Stage Progress Timeline</h3>
+                    <div class="stepper-container" id="stage_stepper">
+                        <!-- Stages will be populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Detailed Stage Table -->
+                <div class="stage-details-table">
+                    <h3 class="section-title">Stage Duration Breakdown</h3>
+                    <table class="detail-table">
+                        <thead>
+                            <tr>
+                                <th>Stage</th>
+                                <th>Status</th>
+                                <th>Duration</th>
+                                <th>Started</th>
+                                <th>Completed</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stage_table_body">
+                            <tr><td colspan="5" class="no-data">No stage data available</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Stage Duration Chart -->
+                <div class="stage-chart-section">
+                    <h3 class="section-title">Time Spent by Stage</h3>
+                    <div class="chart-container">
+                        <canvas id="lead-stage-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Stage Flow Summary -->
+                <div class="stage-flow">
+                    <h3 class="section-title">Stage Flow Summary</h3>
+                    <div class="flow-grid" id="stage_flow_summary">
+                        <!-- Flow cards will be populated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

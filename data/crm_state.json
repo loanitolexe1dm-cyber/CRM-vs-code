@@ -1,0 +1,18 @@
+{
+  "leads": [],
+  "enquiries": [],
+  "reminders": [],
+  "tasks": [],
+  "escalations": [],
+  "dailyCaseUpdates": [],
+  "loanTypes": [
+    "Home Loan",
+    "LAP",
+    "MSME Loan",
+    "Personal Loan",
+    "Business Loan",
+    "Mortgage Loan",
+    "Used Car Loan",
+    "New Car Loan"
+  ]
+}

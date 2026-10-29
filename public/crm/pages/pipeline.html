@@ -1,0 +1,56 @@
+<div class="pipeline-page-wrap">
+    <!-- 📊 Pipeline Dynamic Metrics Banner -->
+    <div class="pipeline-kpi-grid" id="pipelineKpiBar"></div>
+
+    <!-- 🎛️ Underwriting Control & Filter Console -->
+    <div class="pipeline-toolbar">
+        <div class="pt-search-group">
+            <i class="fas fa-search pt-search-icon"></i>
+            <input type="text" id="pipelineSearchInput" oninput="window.updatePipelineFilter('search', this.value)" placeholder="Search client name or phone...">
+        </div>
+        
+        <div class="pt-filters-group">
+            <div class="pt-filter-control">
+                <label><i class="fas fa-building"></i> Department</label>
+                <select id="pipelineCategorySelect" onchange="window.updatePipelineFilter('category', this.value)">
+                    <option value="All">All Departments</option>
+                    <option value="MSME">Business (MSME)</option>
+                    <option value="Retail - Unsecured">Retail - Unsecured</option>
+                    <option value="Retail - Secured">Retail - Secured</option>
+                    <option value="Other Segment">Other Segment</option>
+                </select>
+            </div>
+
+            <div class="pt-filter-control">
+                <label><i class="fas fa-hand-holding-usd"></i> Loan Type</label>
+                <select id="pipelineLoanTypeSelect" onchange="window.updatePipelineFilter('loanType', this.value)">
+                    <option value="All">All Loan Types</option>
+                </select>
+            </div>
+
+            <div class="pt-filter-control" id="pipelineCsoFilterWrapper">
+                <label><i class="fas fa-user-tie"></i> Assigned CSO</label>
+                <select id="pipelineCsoSelect" onchange="window.updatePipelineFilter('cso', this.value)">
+                    <option value="All">All Officers</option>
+                </select>
+            </div>
+
+            <div class="pt-filter-control">
+                <label><i class="fas fa-sort-amount-down"></i> Sort By</label>
+                <select id="pipelineSortSelect" onchange="window.updatePipelineFilter('sort', this.value)">
+                    <option value="value-desc">Loan Value (High to Low)</option>
+                    <option value="value-asc">Loan Value (Low to High)</option>
+                    <option value="tat-desc">Longest Stay Duration</option>
+                    <option value="name-asc">Client Name (A-Z)</option>
+                </select>
+            </div>
+            
+            <button class="btn btn-ghost" onclick="window.resetPipelineFilters()" style="display: flex; align-items: center; gap: 6px; padding: 10px 14px !important; margin-top: 2px;">
+                <i class="fas fa-sync-alt"></i> Clean
+            </button>
+        </div>
+    </div>
+
+    <!-- 🏆 Main Kanban Scroll Area -->
+    <div class="kanban" id="pipeline-kanban"></div>
+</div>

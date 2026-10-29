@@ -1,0 +1,128 @@
+<div class="panel">
+    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--border2); padding-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 34px; height: 34px; border-radius: 8px; background: var(--surface2); color: var(--text); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 15px;">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div>
+                <span style="font-weight: 700; font-size: 17px; color: var(--text); display: block;">Case Updates</span>
+                <span style="font-size: 11px; color: var(--text3);">Lead-specific remarks, progress notes, stage tracking & ownership separated by category</span>
+            </div>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <div style="position: relative; display: inline-block;">
+                <button class="btn btn-secondary btn-sm" onclick="toggleExcelExportDropdown(event)" style="font-weight: 600; padding: 7px 14px; background: var(--surface); border: 1px solid var(--border2); color: var(--text); display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-file-excel"></i>
+                    <span>Export Excel (.xlsx)</span>
+                    <i class="fas fa-chevron-down" style="font-size: 10px; margin-left: 2px;"></i>
+                </button>
+                <div id="excelExportDropdownMenu" style="display: none; position: absolute; right: 0; top: 100%; margin-top: 6px; background: var(--surface); border: 1px solid var(--border2); border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); z-index: 1000; min-width: 250px; overflow: hidden;">
+                    <div style="padding: 8px 12px; font-size: 11px; font-weight: 700; color: var(--text); text-transform: uppercase; background: var(--surface2); border-bottom: 1px solid var(--border2);">
+                        📄 Case Update Sheets (.xlsx)
+                    </div>
+                    <button onclick="exportDailyCaseUpdatesOnlyExcel('all'); closeExcelExportDropdown();" style="width: 100%; text-align: left; padding: 9px 14px; font-size: 12px; color: var(--text); background: transparent; border: none; cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 700; transition: background 0.15s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
+                        <i class="fas fa-file-excel" style="color: var(--text); width: 14px;"></i> All Case Updates (.xlsx)
+                    </button>
+                    <button onclick="exportDailyCaseUpdatesOnlyExcel('MSME'); closeExcelExportDropdown();" style="width: 100%; text-align: left; padding: 9px 14px; font-size: 12px; color: var(--text); background: transparent; border: none; border-top: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.15s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
+                        <i class="fas fa-building" style="color: var(--text); width: 14px;"></i> MSME Case Updates Sheet (.xlsx)
+                    </button>
+                    <button onclick="exportDailyCaseUpdatesOnlyExcel('Retail - Secured'); closeExcelExportDropdown();" style="width: 100%; text-align: left; padding: 9px 14px; font-size: 12px; color: var(--text); background: transparent; border: none; border-top: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.15s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
+                        <i class="fas fa-shield-alt" style="color: var(--text); width: 14px;"></i> Retail Secured Updates Sheet (.xlsx)
+                    </button>
+                    <button onclick="exportDailyCaseUpdatesOnlyExcel('Retail - Unsecured'); closeExcelExportDropdown();" style="width: 100%; text-align: left; padding: 9px 14px; font-size: 12px; color: var(--text); background: transparent; border: none; border-top: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.15s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
+                        <i class="fas fa-user-tag" style="color: var(--text); width: 14px;"></i> Retail Unsecured Updates Sheet (.xlsx)
+                    </button>
+                    <div style="padding: 8px 12px; font-size: 11px; font-weight: 700; color: var(--text); text-transform: uppercase; background: var(--surface2); border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2);">
+                        📊 Profit Center Master Models
+                    </div>
+                    <button onclick="exportFullExcelModelWorkbook('all'); closeExcelExportDropdown();" style="width: 100%; text-align: left; padding: 10px 14px; font-size: 12px; color: var(--text); background: transparent; border: none; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.15s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
+                        <i class="fas fa-globe" style="color: var(--text); width: 14px;"></i> Profit Center - All Departments
+                    </button>
+                    <button onclick="exportFullExcelModelWorkbook('MSME'); closeExcelExportDropdown();" style="width: 100%; text-align: left; padding: 10px 14px; font-size: 12px; color: var(--text); background: transparent; border: none; border-top: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.15s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
+                        <i class="fas fa-briefcase" style="color: var(--text); width: 14px;"></i> Profit Center - Business (MSME)
+                    </button>
+                    <button onclick="exportFullExcelModelWorkbook('Retail - Secured'); closeExcelExportDropdown();" style="width: 100%; text-align: left; padding: 10px 14px; font-size: 12px; color: var(--text); background: transparent; border: none; border-top: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.15s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
+                        <i class="fas fa-shield-alt" style="color: var(--text); width: 14px;"></i> Profit Center - Retail Secured
+                    </button>
+                    <button onclick="exportFullExcelModelWorkbook('Retail - Unsecured'); closeExcelExportDropdown();" style="width: 100%; text-align: left; padding: 10px 14px; font-size: 12px; color: var(--text); background: transparent; border: none; border-top: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.15s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
+                        <i class="fas fa-user-shield" style="color: var(--text); width: 14px;"></i> Profit Center - Retail Unsecured
+                    </button>
+                </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openGoogleSheetsDepartmentModal('daily_updates')" style="font-weight: 700; padding: 7px 14px; display: flex; align-items: center; gap: 6px;" title="Select Department & Open Live Google Sheet in new tab">
+                <i class="fas fa-table"></i>
+                <span>Open Google Sheets</span>
+            </button>
+        </div>
+    </div>
+    
+    <div class="panel-body" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 12px;">
+        <!-- FILTER CONTROL BAR -->
+        <div style="background: var(--surface2); border: 1px solid var(--border2); border-radius: 10px; padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; justify-content: space-between;">
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; flex: 1;">
+                <div style="display: flex; flex-direction: column; gap: 4px; min-width: 140px; flex: 1;">
+                    <label style="font-size: 11px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px;">Time Period:</label>
+                    <select id="dailyUpdateDateFilter" style="height: 38px; min-height: 38px; font-size: 12.5px; line-height: 1.4; padding: 6px 12px; background: var(--surface); color: var(--text); border: 1px solid var(--border2); border-radius: 7px; width: 100%; box-sizing: border-box; cursor: pointer;" onchange="renderDailyCaseUpdates()">
+                        <option value="today" selected>Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="last7">Last 7 Days</option>
+                        <option value="all">All Time</option>
+                    </select>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px; min-width: 160px; flex: 1;">
+                    <label style="font-size: 11px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px;">Employee Filter:</label>
+                    <select id="dailyUpdateUserFilter" style="height: 38px; min-height: 38px; font-size: 12.5px; line-height: 1.4; padding: 6px 12px; background: var(--surface); color: var(--text); border: 1px solid var(--border2); border-radius: 7px; width: 100%; box-sizing: border-box; cursor: pointer;" onchange="renderDailyCaseUpdates()">
+                        <option value="all">All Employees</option>
+                    </select>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px; min-width: 150px; flex: 1;">
+                    <label style="font-size: 11px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px;">Category Filter:</label>
+                    <select id="dailyUpdateDeptFilter" style="height: 38px; min-height: 38px; font-size: 12.5px; line-height: 1.4; padding: 6px 12px; background: var(--surface); color: var(--text); border: 1px solid var(--border2); border-radius: 7px; width: 100%; box-sizing: border-box; cursor: pointer;" onchange="window.switchDcuDepartment(this.value)">
+                        <option value="all">All Categories</option>
+                        <option value="MSME">Business (MSME)</option>
+                        <option value="Retail - Secured">Retail - Secured</option>
+                        <option value="Retail - Unsecured">Retail - Unsecured</option>
+                        <option value="Other Segment">Other Segment</option>
+                    </select>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px; min-width: 150px; flex: 1;">
+                    <label style="font-size: 11px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px;">Loan Type:</label>
+                    <select id="dailyUpdateLoanTypeFilter" style="height: 38px; min-height: 38px; font-size: 12.5px; line-height: 1.4; padding: 6px 12px; background: var(--surface); color: var(--text); border: 1px solid var(--border2); border-radius: 7px; width: 100%; box-sizing: border-box; cursor: pointer;" onchange="renderDailyCaseUpdates()">
+                        <option value="all">All Loan Types</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 4px; min-width: 220px;">
+                <label style="font-size: 11px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px;">Search Updates:</label>
+                <div style="position: relative; width: 100%;">
+                    <input id="dailyUpdateSearchInput" type="text" placeholder="Search lead, phone, remarks..." oninput="renderDailyCaseUpdates()" style="height: 38px; min-height: 38px; font-size: 12px; line-height: 1.4; padding: 6px 12px 6px 34px; background: var(--surface); color: var(--text); border: 1px solid var(--border2); border-radius: 7px; width: 100%; box-sizing: border-box;">
+                    <i class="fas fa-search" style="position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 12px; pointer-events: none;"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN UPDATES FEED / TABLE CONTAINER -->
+        <div class="panel" style="background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; padding: 12px 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border2); padding-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                <div>
+                    <h3 style="margin: 0; font-size: 14px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-clipboard-list" style="color: var(--text);"></i> Case Updates Log
+                    </h3>
+                    <span style="font-size: 11px; color: var(--text2); margin-top: 2px; display: block;">
+                        Showing lead name, stage, remarks, category, and update owner
+                    </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span id="dailyUpdatesCountBadge" class="badge" style="font-size: 11px; font-weight: 700; color: var(--text); background: var(--surface2); border: 1px solid var(--border2); padding: 3px 10px; border-radius: 10px;">
+                        0 Updates Found
+                    </span>
+                </div>
+            </div>
+
+            <div id="dailyUpdatesListContainer">
+                <!-- Rendered by JS -->
+            </div>
+        </div>
+    </div>
+</div>

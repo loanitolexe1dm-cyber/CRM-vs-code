@@ -1,0 +1,88 @@
+<div class="panel">
+    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <span><i class="fas fa-chart-line" style="color: var(--gold); margin-right: 8px;"></i> Performance & Target Analytics</span>
+        <button class="btn btn-sm btn-primary" onclick="openTargetSettingsModal()"><i class="fas fa-bullseye" style="margin-right: 6px;"></i> Set Target Configuration</button>
+    </div>
+    <div class="panel-body" style="display: flex; flex-direction: column; gap: 24px;">
+        
+        <!-- SECTION 1: TARGET VS ACHIEVEMENT ANALYSIS -->
+        <div class="report-section" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border2); border-radius: 12px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border2); padding-bottom: 12px;">
+                <h3 style="margin: 0; font-size: 16px; color: #fff; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-crosshairs" style="color: var(--gold);"></i> Target vs. Achievement Analysis
+                </h3>
+                <span style="font-size: 12px; color: var(--text2);">SME Loans • Retail Loans • Product Category Breakdowns</span>
+            </div>
+            
+            <!-- SME & Retail Target Summary Cards -->
+            <div id="target-summary-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                <!-- Populated dynamically by app.js -->
+            </div>
+
+            <!-- Product Category Wise Target Table -->
+            <div style="margin-top: 16px;">
+                <h4 style="font-size: 14px; color: var(--text2); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    Product Category Target vs Achievement
+                </h4>
+                <div class="tbl-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product Category</th>
+                                <th>Target Amount</th>
+                                <th>Disbursed Amount</th>
+                                <th>Pipeline Amount</th>
+                                <th>Achievement %</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="product-target-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: ROLE-BASED EMPLOYEE PERFORMANCE ANALYSIS -->
+        <div class="report-section" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border2); border-radius: 12px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border2); padding-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="margin: 0; font-size: 16px; color: #fff; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-user-check" style="color: var(--gold);"></i> Role-Based Employee Performance
+                </h3>
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <label style="font-size: 12px; color: var(--text2);">Filter Role:</label>
+                    <select id="employeeRoleFilter" class="bank-input bank-select" onchange="renderReports()" style="padding: 4px 10px; background: rgba(0,0,0,0.3); color: #fff; border: 1px solid var(--border2); border-radius: 6px; font-size: 12px;">
+                        <option value="All">All Job Roles</option>
+                        <option value="cso">CSO (Client Service Officer)</option>
+                        <option value="msme_head">MSME Department Head</option>
+                        <option value="retail_head">Retail Department Head</option>
+                        <option value="cse">CSE (Telecaller / Sourcing)</option>
+                        <option value="bank_follow_officer">Bank Follow Officer</option>
+                        <option value="legal_officer">Legal & Valuation Officer</option>
+                        <option value="admin">System Admin</option>
+                    </select>
+
+                    <label style="font-size: 12px; color: var(--text2); margin-left: 6px;">Filter Employee / Person Cases:</label>
+                    <select id="employeePersonFilter" class="bank-input bank-select" onchange="onEmployeePersonFilterChange()" style="padding: 4px 10px; background: rgba(0,0,0,0.3); color: #fff; border: 1px solid var(--border2); border-radius: 6px; font-size: 12px;">
+                        <option value="All">All Employees</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Employee Performance Grid Cards -->
+            <div class="stat-row" id="employee-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+
+        <!-- SECTION 3: STAGE DURATION & BOTTLENECK ANALYSIS -->
+        <div class="report-section" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border2); border-radius: 12px; padding: 20px;">
+            <h3 style="margin: 0 0 16px 0; font-size: 16px; color: #fff; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-stopwatch" style="color: var(--gold);"></i> Stage Average Turnaround Time (TAT)
+            </h3>
+            <canvas id="stageChart" height="200"></canvas>
+        </div>
+
+    </div>
+</div>

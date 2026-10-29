@@ -1,0 +1,104 @@
+<div class="panel accounts-panel" id="accountsMainPanel">
+    <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(217, 161, 62, 0.15); border: 1px solid rgba(217, 161, 62, 0.4); display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 18px;">
+                <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-weight: 800; font-size: 18px; color: var(--text); letter-spacing: -0.3px;">Accounts & Disbursal Management</span>
+                    <span class="badge" id="acc-total-cases-badge" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;">0 Disbursed</span>
+                </div>
+                <div style="font-size: 11px; color: var(--text3); margin-top: 2px;">
+                    Disbursement records • Bank & DSA payouts • SME advances • Referral agent ledgers
+                </div>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-sm btn-primary" onclick="openSelectLeadToDisburseModal()" style="font-weight: 700; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(217, 161, 62, 0.25);">
+                <i class="fas fa-plus-circle"></i> + Record Disbursement
+            </button>
+            <button class="btn btn-sm btn-secondary" onclick="openNewDsaModal()" style="font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                <i class="fas fa-handshake" style="color: var(--gold);"></i> + New DSA
+            </button>
+            <button class="btn btn-sm btn-secondary" onclick="openRecordSmeAdvanceModal()" style="font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                <i class="fas fa-money-bill-wave" style="color: #34d399;"></i> + SME Advance
+            </button>
+            <button class="btn btn-sm btn-outline" onclick="exportAccountsToExcel()" style="font-weight: 600; display: inline-flex; align-items: center; gap: 6px;" title="Export Accounts to Excel">
+                <i class="fas fa-file-excel" style="color: #10b981;"></i> Export
+            </button>
+        </div>
+    </div>
+
+    <div class="panel-body" style="padding: 18px 22px;">
+        <!-- Top Metric KPI Cards -->
+        <div id="accounts-kpi-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px;">
+            <!-- Populated dynamically by renderAccountsPage() -->
+        </div>
+
+        <!-- Accounts Sub-Navigation Tabs -->
+        <div style="display: flex; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 18px; overflow-x: auto; scrollbar-width: none;">
+            <button class="btn btn-sm acc-tab-btn active" id="accTabBtn_cases" onclick="switchAccountsTab('cases')" style="padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fas fa-file-contract text-gold"></i> Disbursed Cases & Bank Payouts <span class="badge" id="accTabCount_cases" style="background: rgba(255,255,255,0.1); font-size: 11px;">0</span>
+            </button>
+            <button class="btn btn-sm acc-tab-btn" id="accTabBtn_dsa" onclick="switchAccountsTab('dsa')" style="padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fas fa-network-wired text-gold"></i> DSA Case & Payout History <span class="badge" id="accTabCount_dsa" style="background: rgba(255,255,255,0.1); font-size: 11px;">0</span>
+            </button>
+            <button class="btn btn-sm acc-tab-btn" id="accTabBtn_sme" onclick="switchAccountsTab('sme')" style="padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fas fa-coins text-gold"></i> Advance from SME <span class="badge" id="accTabCount_sme" style="background: rgba(255,255,255,0.1); font-size: 11px;">0</span>
+            </button>
+            <button class="btn btn-sm acc-tab-btn" id="accTabBtn_comm" onclick="switchAccountsTab('comm')" style="padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fas fa-comments text-gold"></i> New DSA Communication Log <span class="badge" id="accTabCount_comm" style="background: rgba(255,255,255,0.1); font-size: 11px;">0</span>
+            </button>
+            <button class="btn btn-sm acc-tab-btn" id="accTabBtn_referral" onclick="switchAccountsTab('referral')" style="padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fas fa-user-friends text-gold"></i> Referral Agent Payouts <span class="badge" id="accTabCount_referral" style="background: rgba(255,255,255,0.1); font-size: 11px;">0</span>
+            </button>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div id="accountsFilterToolbar" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border2); border-radius: 10px; padding: 10px 14px;">
+            <div style="position: relative; flex: 1; min-width: 260px;">
+                <input type="text" id="accSearchInput" placeholder="Search customer, case, phone, bank, DSA, referral..." class="tb-search" style="width: 100%; padding: 9px 14px 9px 38px; font-size: 13px;" oninput="renderAccountsPage()">
+                <i class="fas fa-search" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--gold); opacity: 0.85; font-size: 13px; pointer-events: none;"></i>
+            </div>
+            
+            <!-- Requirement 7: Bank / Financial Institution Filter - Cases should be searchable bank-wise -->
+            <select id="accBankFilter" class="tb-search" style="max-width: 180px; padding: 8px 12px; font-size: 13px;" onchange="renderAccountsPage()">
+                <option value="all">All Banks / FIs</option>
+            </select>
+
+            <select id="accProductFilter" class="tb-search" style="max-width: 170px; padding: 8px 12px; font-size: 13px;" onchange="renderAccountsPage()">
+                <option value="all">All Loan Products</option>
+                <option value="Business Loan">Business Loan</option>
+                <option value="Home Loan">Home Loan</option>
+                <option value="Personal Loan">Personal Loan</option>
+                <option value="LAP">LAP</option>
+                <option value="Vehicle Loan">Vehicle Loan</option>
+                <option value="MSME Loan">MSME Loan</option>
+                <option value="Machinery Loan">Machinery Loan</option>
+                <option value="Project Finance">Project Finance</option>
+                <option value="Working Capital">Working Capital</option>
+            </select>
+
+            <select id="accPayoutStatusFilter" class="tb-search" style="max-width: 160px; padding: 8px 12px; font-size: 13px;" onchange="renderAccountsPage()">
+                <option value="all">All Payout Statuses</option>
+                <option value="pending">Payout Pending</option>
+                <option value="received">Payout Received</option>
+                <option value="reconciled">Reconciled</option>
+            </select>
+
+            <select id="accDateFilter" class="tb-search" style="max-width: 150px; padding: 8px 12px; font-size: 13px;" onchange="renderAccountsPage()">
+                <option value="all">All Time</option>
+                <option value="this_month">This Month</option>
+                <option value="last_month">Last Month</option>
+                <option value="this_quarter">This Quarter</option>
+                <option value="this_year">This Financial Year</option>
+            </select>
+        </div>
+
+        <!-- Dynamic Accounts Tab Container -->
+        <div id="accountsTabContainer">
+            <!-- Rendered by renderAccountsPage() -->
+        </div>
+    </div>
+</div>

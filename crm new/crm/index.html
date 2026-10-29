@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="theme-gold">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Loanitol</title>
+    <meta name="description" content="Comprehensive CRM platform for Loanitol to manage, track, and process leads, reminders, tasks, TAT breaches, loan case disbursements, and accounts.">
+    <meta property="og:title" content="CRM Loanitol">
+    <meta property="og:description" content="Comprehensive CRM platform for Loanitol to manage, track, and process leads, reminders, tasks, TAT breaches, loan case disbursements, and accounts.">
+    <link rel="icon" type="image/svg+xml" href="loanitol-icon.svg">
+    <link rel="stylesheet" href="../css/styles.css?v=3.2">
+    <link rel="stylesheet" href="../css/modern-dashboard.css?v=3.2">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <!-- Chart.js and XLSX and PDF.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script>
+        if (window.pdfjsLib) {
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+    </script>
+    <!-- Supabase JS Client SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Firebase App & Auth Compat for Google Sheets OAuth -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        .modal {
+            background: var(--bg2);
+            border: 1px solid var(--border2);
+            border-radius: 16px;
+            width: min(1380px, 96vw);
+            max-width: 98vw;
+            max-height: 94vh;
+            min-height: 75vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal.fullscreen {
+            width: 100vw !important;
+            max-width: 100vw !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            border-radius: 0;
+        }
+        .modal-hd {
+            padding: 20px 30px;
+            border-bottom: 2px solid var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            background: var(--surface);
+            border-radius: 16px 16px 0 0;
+            flex-shrink: 0;
+        }
+        .modal-title {
+            font-size: 24px !important;
+            font-weight: 800 !important;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+        .modal-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .modal-fullscreen,
+        .modal-x {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: var(--surface2);
+            border: 1.5px solid var(--border2);
+            color: var(--text2);
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-fullscreen:hover {
+            background: var(--gold-dim);
+            color: var(--gold);
+            border-color: var(--gold);
+        }
+        .modal-x:hover {
+            background: var(--red-dim);
+            color: var(--red2);
+            border-color: var(--red);
+        }
+        .modal-bd {
+            padding: 24px 32px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            flex: 1;
+            font-size: 16.5px;
+            line-height: 1.6;
+        }
+        .modal-bd .lead-detail-container {
+            margin: 0;
+            border-radius: 0;
+            display: flex;
+            flex-direction: column;
+            height: auto !important;
+            overflow: visible !important;
+        }
+        .modal-bd .lead-detail-content {
+            padding: 16px 0 0 0;
+            max-height: none !important;
+            height: auto !important;
+            overflow: visible !important;
+            flex: 1;
+        }
+        .modal-ft {
+            padding: 14px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            background: var(--surface);
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            flex-shrink: 0;
+        }
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.80);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 10000 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        .overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .tabs {
+            display: flex;
+            overflow-x: auto;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 18px;
+            flex-shrink: 0;
+            scrollbar-width: none;
+            gap: 6px;
+        }
+        .tabs::-webkit-scrollbar { display: none; }
+        .tab {
+            white-space: nowrap;
+            padding: 12px 18px;
+            background: transparent;
+            border: none;
+            color: var(--text2);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            font-size: 16px !important;
+            font-weight: 700;
+        }
+        .tab:hover { color: var(--text); }
+        .tab.active {
+            color: var(--gold) !important;
+            border-bottom-color: var(--gold) !important;
+            font-weight: 800 !important;
+        }
+    </style>
+</head>
+
+<body data-theme="theme-gold">
+    <!-- Login Screen (initially visible) -->
+    <div id="loginContainer" class="login-container">
+        <div class="login-box">
+            <div class="login-header-logo">
+                <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 14px;">
+                    <img id="loginMainLogoImg" src="loanitol-logo.svg" alt="Loanitol™ - We loan it all" style="height: 68px; max-height: 130px; width: auto; max-width: 100%; object-fit: contain; display: block;" onerror="this.outerHTML='<div style=\'display:flex;align-items:center;gap:12px;\'><svg width=\'46\' height=\'46\' viewBox=\'0 0 118 118\'><path d=\'M118 0V78.6697L78.6697 118V78.6697H39.3304V39.3304H0L39.3304 0H118Z\' fill=\'#D81F36\'/></svg><div style=\'text-align:left;\'><div style=\'font-size:26px;font-weight:800;color:#0E3746;letter-spacing:-0.5px;line-height:1;\'>Loanitol<sup style=\'font-size:10px;vertical-align:top;\'>TM</sup></div><div style=\'font-size:12px;color:#5A5A5C;margin-top:2px;\'>We loan it all</div></div></div>'" />
+                </div>
+                <p class="login-subtitle" id="loginSubtitleText">Enterprise Loan Operations & Lead Management System</p>
+            </div>
+            
+            <div class="login-form-group">
+                <div class="input-icon-wrap">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="loginId" placeholder="User ID or Username" autocomplete="username">
+                </div>
+                <div class="input-icon-wrap">
+                    <i class="fas fa-key input-icon"></i>
+                    <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password">
+                    <button type="button" class="pwd-toggle-btn" onclick="togglePasswordVisibility()" title="Toggle Password Visibility">
+                        <i class="fas fa-eye" id="pwdEyeIcon"></i>
+                    </button>
+                </div>
+                <button id="loginBtn" type="button" class="btn btn-primary btn-login-submit" onclick="login()">
+                    <span>Sign In</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <div id="loginError" class="error-msg"></div>
+            </div>
+
+            <div class="login-security-notice" style="margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); text-align: center; font-size: 11px; color: var(--text3); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <i class="fas fa-shield-alt" style="color: var(--gold);"></i>
+                <span>Enterprise Authentication Protected &bull; Admin Provisioned</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App (initially hidden) -->
+    <div id="appContainer" class="app hidden">
+        <!-- Sidebar will be injected here by JS -->
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <div class="main">
+            <header class="topbar" id="topbar">
+                <div class="topbar-title-wrap">
+                    <div class="topbar-title" id="pageTitle" style="display: none;">Dashboard</div>
+                    <div class="live-sync-status" id="liveSyncPill" title="Live Database Synchronization Active">
+                        <span class="live-pulse-dot"></span>
+                        <span class="live-status-text">Realtime Live</span>
+                    </div>
+                    <div class="live-clock-pill" id="liveClockPill" title="Current Live Local Time">
+                        <i class="far fa-clock"></i>
+                        <span id="topbarLiveClock">--:--:--</span>
+                    </div>
+                </div>
+
+                <div class="search-wrap">
+                    <i class="fas fa-search search-icon" id="topSearchBtn" onclick="window.triggerGlobalSearch()" title="Click to filter"></i>
+                    <input type="text" id="searchInput" class="tb-search" placeholder="Search leads, enquiries, tasks..." oninput="window.handleGlobalSearch(this.value)" onkeydown="if(event.key==='Enter') window.triggerGlobalSearch()">
+                    <span class="search-kbd-hint">⌘K</span>
+                </div>
+
+                <div class="topbar-actions">
+                    <div class="notification-wrap" onclick="toggleNotifications(event)" title="Alerts & Notifications">
+                        <i class="fas fa-bell notification-icon"></i>
+                        <span class="notification-badge" id="notificationBadge">0</span>
+                    </div>
+                    <div class="notification-dropdown" id="notificationDropdown" onclick="event.stopPropagation()">
+                        <div class="notification-header">
+                            <span><i class="fas fa-bell mr-1"></i> Live Alerts</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="notification-count-tag" id="notificationHeaderCount">0 New</span>
+                                <button class="btn btn-xs btn-secondary" onclick="clearLeadNotifications(); renderNotifications(); event.stopPropagation();" title="Mark all notifications as read">
+                                    <i class="fas fa-check-double"></i> Mark Read
+                                </button>
+                            </div>
+                        </div>
+                        <div class="notification-list" id="notificationList"></div>
+                    </div>
+
+                    <div class="user-chip-wrap" id="topbarUserChip" title="Current Logged In User">
+                        <div id="topbarUserAvatar">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div style="display: flex; flex-direction: column; line-height: 1.15;">
+                            <span id="topbarUserName">Admin</span>
+                            <span id="topbarUserRole">ADMIN</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" id="addEnquiryBtn" onclick="openAddEnquiry()">
+                        <i class="fas fa-question-circle"></i> Enquiry
+                    </button>
+                    <button class="btn btn-secondary" id="newLeadBtn" onclick="openAddLead()">
+                        <i class="fas fa-user-plus"></i> Lead
+                    </button>
+                    <button class="btn btn-secondary" onclick="openCreateReminder()" title="New Callback">
+                        <i class="fas fa-phone-alt"></i> Callback
+                    </button>
+                    <button class="btn btn-secondary" onclick="openCreateTask()" title="New Task">
+                        <i class="fas fa-tasks"></i> Task
+                    </button>
+                    <button class="btn btn-ghost btn-logout" onclick="logout()" title="Log out">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </header>
+            <div class="content" id="appContent">
+                <!-- Page content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div class="overlay" id="overlay" onclick="closeOverlay(event)">
+        <div class="modal" id="modal">
+            <div class="modal-hd">
+                <div class="modal-title" id="modalTitle"></div>
+                <div class="modal-controls">
+                    <button class="modal-back-btn" id="modalBackBtn" onclick="closeModal()" title="Back" style="display:none; background:rgba(255,255,255,0.08); border:1px solid var(--border); color:var(--text); cursor:pointer; padding:4px 10px; font-size:12px; font-weight:600; border-radius:6px; margin-right:6px; align-items:center; gap:5px;">
+                        <i class="fas fa-arrow-left"></i> <span>Back</span>
+                    </button>
+                    <button class="modal-fullscreen" id="modalFullscreenBtn" onclick="toggleModalFullscreen()" title="Fullscreen">⛶</button>
+                    <button class="modal-x" onclick="closeModal()">✕</button>
+                </div>
+            </div>
+            <div class="modal-bd" id="modalBody"></div>
+            <div class="modal-ft" id="modalFoot"></div>
+        </div>
+    </div>
+
+    <!-- Toasts Container -->
+    <div id="toasts"></div>
+
+    <script src="../js/lead-details.js?v=3.8"></script>
+    <script src="../js/lead-modal-enhanced.js?v=3.8"></script>
+    <script src="../js/modern-dashboard.js?v=3.8"></script>
+    <script src="../js/backup_seed.js?v=3.8"></script>
+    <script src="../js/accounts-management.js?v=3.8"></script>
+    <script src="../js/app.js?v=3.8"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof applyBrandLogo === 'function') {
+                applyBrandLogo();
+            }
+        });
+    </script>
+</body>
+
+</html>

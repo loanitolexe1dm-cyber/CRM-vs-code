@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.vscode/
+bun.lock
+*.log
+crm new/.git/
+supabase_backup_old.json
+*.bak
+.env
+.env.local
+.DS_Store

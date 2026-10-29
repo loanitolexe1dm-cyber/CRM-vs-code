@@ -1,0 +1,10 @@
+{
+  "sidebarLogo": "loanitol-logo-white.svg",
+  "loginLogo": "loanitol-logo.svg",
+  "brandName": "Loanitol™",
+  "tagline": "We loan it all — Enterprise Loan Operations",
+  "logoHeight": 64,
+  "loginLogoHeight": 68,
+  "isCustom": true,
+  "isWhiteColor": true
+}

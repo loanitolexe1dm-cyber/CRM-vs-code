@@ -1,0 +1,8 @@
+{
+  "name": "CRM Loanitol",
+  "description": "Comprehensive CRM platform for Loanitol to manage, track, and process leads, reminders, tasks, TAT breaches, loan case disbursements, and accounts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

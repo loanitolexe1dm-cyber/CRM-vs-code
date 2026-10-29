@@ -1,0 +1,38 @@
+# Visual Studio / .NET
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+bin/
+obj/
+*.log
+*.vsix
+*.dbmdl
+*.dbproj.schemaview
+TestResults/
+
+# Node / JavaScript
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.vscode/
+
+# Firebase local config
+firebase.json
+.firebaserc
+
+# Generated files
+*.js.map
+*.css.map
+
+# Live Server cache
+.vscode/*
