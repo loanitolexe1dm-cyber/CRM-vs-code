@@ -1237,12 +1237,21 @@ class SupabaseFirebaseRef {
                     const now = new Date().toISOString();
                     if (Array.isArray(value)) {
                         const rows = value.map((item, idx) => ({ id: String(idx), data: item, updated_at: now }));
-                        if (rows.length > 0) sb.from(this.tableName).upsert(rows).catch(console.warn);
+                        if (rows.length > 0) {
+                            const { error } = await sb.from(this.tableName).upsert(rows);
+                            if (error) throw error;
+                        }
                     } else if (typeof value === 'object' && value !== null) {
                         const rows = Object.entries(value).map(([key, item]) => ({ id: key, data: item, updated_at: now }));
-                        if (rows.length > 0) sb.from(this.tableName).upsert(rows).catch(console.warn);
+                        if (rows.length > 0) {
+                            const { error } = await sb.from(this.tableName).upsert(rows);
+                            if (error) throw error;
+                        }
                     }
-                } catch (e) {}
+                } catch (e) {
+                    console.error(`[Supabase set failed on ${this.tableName}]:`, e);
+                    throw e;
+                }
             }
             return;
         }
@@ -1266,9 +1275,11 @@ class SupabaseFirebaseRef {
         if (sb && !supabaseSetupRequired) {
             try {
                 const now = new Date().toISOString();
-                await sb.from(this.tableName).upsert({ id, data: value, updated_at: now });
+                const { error } = await sb.from(this.tableName).upsert({ id, data: value, updated_at: now });
+                if (error) throw error;
             } catch (e) {
                 console.warn(`[Supabase set notice on ${this.tableName}]:`, e);
+                throw e;
             }
         }
     }
@@ -1301,9 +1312,11 @@ class SupabaseFirebaseRef {
         if (sb && !supabaseSetupRequired) {
             try {
                 const now = new Date().toISOString();
-                await sb.from(this.tableName).upsert({ id, data: merged, updated_at: now });
+                const { error } = await sb.from(this.tableName).upsert({ id, data: merged, updated_at: now });
+                if (error) throw error;
             } catch (e) {
                 console.warn(`[Supabase update notice on ${this.tableName}]:`, e);
+                throw e;
             }
         }
     }
@@ -1327,9 +1340,11 @@ class SupabaseFirebaseRef {
 
         if (sb && !supabaseSetupRequired) {
             try {
-                await sb.from(this.tableName).delete().eq('id', id);
+                const { error } = await sb.from(this.tableName).delete().eq('id', id);
+                if (error) throw error;
             } catch (e) {
                 console.warn(`[Supabase delete notice on ${this.tableName}]:`, e);
+                throw e;
             }
         }
     }
@@ -6471,6 +6486,52 @@ window.isUserAdmin = isUserAdmin;
 window.canUserViewEnquiry = canUserViewEnquiry;
 window.getVisibleEnquiries = getVisibleEnquiries;
 
+function normalizeDepartmentId(departmentId) {
+    const value = String(departmentId || '').trim().toLowerCase();
+    if (!value) return '';
+
+    const department = (departments || []).find(d =>
+        [d.id, d.code, d.name].some(candidate => String(candidate || '').trim().toLowerCase() === value)
+    );
+    const id = String(department?.id || value).replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+    if (['msme', 'msme_dept', 'msme_division'].includes(id)) return 'sme';
+    if (['software', 'digital_marketing_&_software', 'digital_marketing_and_software'].includes(id)) return 'digital_marketing';
+    if (['hr_&_admin', 'hr_and_admin', 'hr_admin'].includes(id)) return 'hr';
+    return id;
+}
+
+function getLeadDepartmentId(lead) {
+    if (!lead || typeof lead !== 'object') return '';
+
+    const explicitDepartment = normalizeDepartmentId(lead.department);
+    if (explicitDepartment && !['general', 'unassigned'].includes(explicitDepartment)) return explicitDepartment;
+
+    const headId = String(lead.deptHeadId || '').toLowerCase().trim();
+    if (headId) {
+        const headDepartment = (departments || []).find(d => String(d.headId || '').toLowerCase().trim() === headId);
+        if (headDepartment) return normalizeDepartmentId(headDepartment.id);
+    }
+
+    const leadCategory = typeof getDepartmentForLead === 'function' ? getDepartmentForLead(lead) : '';
+    if (leadCategory) return normalizeDepartmentId(leadCategory);
+    return '';
+}
+
+function getDepartmentMemberIds(departmentId, deptHeadId = '') {
+    const normalizedDepartment = normalizeDepartmentId(departmentId);
+    if (!normalizedDepartment) return [];
+
+    const department = (departments || []).find(d => normalizeDepartmentId(d.id) === normalizedDepartment);
+    return Array.from(new Set([
+        ...(users || [])
+            .filter(user => normalizeDepartmentId(user.department) === normalizedDepartment)
+            .map(user => user.userId)
+            .filter(Boolean),
+        department?.headId,
+        deptHeadId
+    ].filter(Boolean)));
+}
+
 function canUserViewLead(lead, user = currentUser) {
     if (!lead || !user) return false;
     if (isUserAdmin(user)) return true;
@@ -6637,6 +6698,16 @@ function canUserViewLead(lead, user = currentUser) {
 
         // If not assigned or permitted by admin, legal users cannot access unrelated leads
         return false;
+    }
+
+    const leadDepartmentId = getLeadDepartmentId(lead);
+    if (leadDepartmentId) {
+        const userId = String(user.userId || user.id || '').toLowerCase().trim();
+        const departmentMemberIds = getDepartmentMemberIds(leadDepartmentId, lead.deptHeadId)
+            .map(memberId => String(memberId).toLowerCase().trim());
+        if (normalizeDepartmentId(user.department) === leadDepartmentId || departmentMemberIds.includes(userId)) {
+            return true;
+        }
     }
 
     // 6. Accounts Department / Accounts Page Access / Disbursed Cases
@@ -36868,6 +36939,7 @@ async function saveLead() {
             'admin_1',
             ...(csoId ? [csoId] : []),
             ...(deptHeadId ? [deptHeadId] : []),
+            ...getDepartmentMemberIds(leadDepartment, deptHeadId),
             ...(category === 'MSME' || category === 'SME' ? users.filter(u => u.role === 'msme_head' || u.userId === 'anjali_jp').map(u => u.userId) : []),
             ...(category.includes('Secured') ? users.filter(u => u.role === 'retail_secured_head' || u.userId === 'aneena_s').map(u => u.userId) : []),
             ...(category.includes('Unsecured') ? users.filter(u => u.role === 'retail_unsecured_head' || u.userId === 'bilsy_j').map(u => u.userId) : []),
